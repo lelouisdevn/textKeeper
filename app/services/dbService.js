@@ -37,7 +37,7 @@ class DBService {
         const result = await this.text.findOneAndUpdate(
             filter,
             { $set: updateData },
-            { returnDocument: "after" }
+            { returnDocument: "after",}
         )
         return result.value;
     }
@@ -46,6 +46,17 @@ class DBService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         })
         return result.value;
+    }
+
+    async find(filter) {
+      const cursor = await this.text.find(filter);
+      return await cursor.toArray();
+    }
+
+    async findById(id) {
+      return await this.text.findOne({
+        _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+      });
     }
 }
 
