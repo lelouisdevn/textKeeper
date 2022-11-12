@@ -11,6 +11,7 @@ class DBService {
             timeStamp: data.timeStamp,
             content: data.content,
             status: data.status,
+            extension: data.extension,
         }
 
         Object.keys(textDoc).forEach(
