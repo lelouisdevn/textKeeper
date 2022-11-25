@@ -1,6 +1,7 @@
 const ApiError = require("../apiError")
 const MongoDB = require("../utils/mongodb_utils")
 const DBService = require("../services/dbService")
+const TrashBin = require("../services/trashbin")
 
 exports.get = async (req, res, next) => {
 	try {
@@ -22,6 +23,21 @@ exports.getAll = async (req, res, next) => {
 		documents = await dbService.find({});
 	}catch(error){
 		console.log(error)
+	}
+	return res.send(documents);
+}
+
+exports.getfiles = async (req, res, next) => {
+	let documents = []
+	try {
+		const dbService = new TrashBin(MongoDB.client);
+		documents = await dbService.find({})
+		if (!document) {
+				return next(new ApiError(404, "Document is not found"))
+		}
+
+	}catch(error){
+		console.log("error somewhere")
 	}
 	return res.send(documents);
 }
@@ -68,4 +84,34 @@ exports.delete = async (req, res, next) => {
     } catch (error) {
         return next(new ApiError(500, `Error in deleting this document with id=${req.params.id}.`))
     }
+}
+
+exports.moveToTrash = async (req, res, next) => {
+	try {
+			const dbService = new TrashBin(MongoDB.client)
+			const document = await dbService.create(req.body);
+
+			if (!document) {
+					return next(new ApiError(404, "Document is not found"))
+			}
+			return res.send({message: "Document was created successfully."})
+	} catch (error) {
+			return next(new ApiError(500, `Error in creating`))
+	}
+}
+
+exports.restore = async (req, res, next) => {
+	try {
+		const dbService = new TrashBin(MongoDB.client)
+		const document = await dbService.delete(req.params.id);
+
+		// console.log(req.params.id)
+
+		if (!document) {
+				return next(new ApiError(404, "Document is not found"))
+		}
+		return res.send({message: "Document was deleted successfully."})
+	} catch (e) {
+			return next(new ApiError(500, "Internal Error"))
+	}
 }

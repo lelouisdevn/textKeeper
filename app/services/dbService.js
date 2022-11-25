@@ -12,6 +12,7 @@ class DBService {
             content: data.content,
             status: data.status,
             extension: data.extension,
+            fontStyle: data.fontStyle,
         }
 
         Object.keys(textDoc).forEach(
